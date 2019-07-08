@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 import json
-import re
 
 
 from . import util
@@ -12,13 +11,6 @@ from django.views.decorators.csrf import csrf_exempt
 from dbTables.models import Bookshelf
 
 
-def word_filter(word):
-    result = []
-    for char in word:
-        if re.search("[\u4e00-\u9fff]",char) is not None:
-            result.append(char)
-    return ''.join(result)
-
 
 @csrf_exempt
 @require_POST
@@ -28,45 +20,8 @@ def upload_pic(request):
     pic = request.FILES.get("pic")
     # pic = ImageFile(pic)
     pics = segment(pic.read(), DEBUG=0)
-    ocr_result_list = []
-    # dir_name = "./output/{0}".format(GLOBALINDEX)
-    # fo = open(dir_name + "/seachString.txt", "w")
-    #GLOBALINDEX = GLOBALINDEX + 1
-    for pic_group in pics:
-        search_string = ""
-        search_words = []
-        for pic in pic_group[:-1]:
-            result = ocr(pic)
-            print("this is text_cut img")
-            print(result)
-            if "words_result" in result:
-                for keyword in result["words_result"]:
-                    word = word_filter(keyword["words"])
-                    if len(word)>0:
-                        search_string = search_string + word + "+"
-                        search_words.append(word)
-        search_string = search_string[:-1]
-            # print(search_string)
-        if search_string == "":
-            result = ocr(pic_group[-1])
-            print("this is cut img")
-            print(result)
-            if "words_result" in result:
-                for keyword in result["words_result"]:
-                    word = word_filter(keyword["words"])
-                    if len(word)>0:
-                        search_string = search_string + word + "+"
-                        search_words.append(word)
-        search_string = search_string[:-1]
-        print("search_string")
-        print(search_string)
-
-        # fo.write(search_string+"\n")
-
-        if search_string != "":
-            ocr_result_list.append({"search_string": search_string, "search_words": search_words})
-    # fo.close()
-    return JsonResponse(util.get_json_dict(message='analyse success', data=ocr_result_list))
+    ocr_result  = ocr(pics)
+    return JsonResponse(util.get_json_dict(message='analyse success', data=ocr_result))
 
 
 def book_candidate(searchList, n):

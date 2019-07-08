@@ -47,27 +47,27 @@ def get_access_token():
     access_token.save()
     return r["access_token"]
 
-
-@require_GET
-#invalid when mini program isn't posted
+# invalid when mini program isn't posted
 def get_wxcode(request):
     access_token = get_access_token()
-    if not os.path.exists("../images/wxcode.png"):
+    if not os.path.exists("../images/wxcode.jpg"):
         params = {
             "access_token": access_token,
+        }
+        data = {
             "scene": "1"
         }
         header = {
             "Content-Type": "application/json; charset=UTF-8"}
-        r = requests.post(util.GETWXCODE, data=params, headers=header)
-        print (r.text)
-        file = open('../images/wxcode.png', 'rb')
-        file.write(r.text)
+        r = requests.post(util.GETWXCODE, params=params, json=data, headers=header)
+        file = open('../images/wxcode.jpg', 'wb')
+        file.write(r.content)
         file.close()
-    file = open('../images/wxcode.png', 'rb')
+        print ("file write finished")
+    file = open('../images/wxcode.jpg', 'rb')
     response = HttpResponse(file)
     response['Content-Type'] = 'application/octet-stream'
-    response['Content-Disposition'] = 'attachment;filename="wxcode.png"'
+    response['Content-Disposition'] = 'attachment;filename="wxcode.jpg"'
     file.close()
     return response
 
