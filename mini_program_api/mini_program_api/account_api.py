@@ -34,7 +34,7 @@ def code2id(request):
 
 def get_access_token():
     access_token = Variable.objects.get_or_create(name="wx_access_token")[0]
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now()
     if access_token.lifeTime != '':
         if (now - datetime.timedelta(0, int(access_token.lifeTime))) < access_token.lastModify:
             return access_token.value
@@ -49,8 +49,8 @@ def get_access_token():
 
 # invalid when mini program isn't posted
 def get_wxcode(request):
-    access_token = get_access_token()
     if not os.path.exists("../images/wxcode.jpg"):
+        access_token = get_access_token()
         params = {
             "access_token": access_token,
         }

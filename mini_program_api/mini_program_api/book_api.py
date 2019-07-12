@@ -74,7 +74,7 @@ def get_bookshelf(request):
     sessionId = request.POST.get("sessionId")
     print("User login:")
     print(sessionId)
-    bookList = list(Bookshelf.objects.filter(sessionId=sessionId).values())
+    bookList = list(Bookshelf.objects.filter(sessionId=sessionId).order_by("-lastRead").values())
     for book in bookList:
         book["lastRead"] = book["lastRead"].date()
     return JsonResponse(util.get_json_dict(message="get bookshelf success", data=bookList))

@@ -1,6 +1,7 @@
 import base64
 import json
 from Crypto.Cipher import AES
+from functools import wraps
 
 APPID = "wxa62d182b0330c59b"
 APPSECRET = "ed54aa4d9c35db2e0664d4ae4501aacb"
@@ -16,6 +17,14 @@ def get_json_dict(data={}, err_code=0, message="Success"):
         'data': data
     }
     return ret
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        kwargs.POST = json.loads(kwargs.body.decode('utf-8'))
+        sessionId = kwargs.POST['sessionId']
+    return decorated
 
 
 class WXBizDataCrypt:

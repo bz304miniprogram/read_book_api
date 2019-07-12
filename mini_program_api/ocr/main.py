@@ -92,42 +92,44 @@ def ocr(pics):
         "probability": "true"
     }
     ocr_result_list = []
-    for pic_group in pics:
-        search_string = ""
-        search_words = []
-        ### try with cut images
-        for pic in pic_group[:-1]:
-            data["image"] = base64.b64encode(pic).decode("utf-8")
-            r = requests.post(OCRURLB, params=params, headers=header, data=data)
-            print(r)
-            result = json.loads(r.text)
-            print("this is text_cut img", result)
-            if "words_result" in result:
-                for keyword in result["words_result"]:
-                    word = word_filter(keyword["words"])
-                    if len(word) > 0:
-                        search_string = search_string + word + "+"
-                        search_words.append(word)
-        search_string = search_string[:-1]
-        ### use the origin image
-        if search_string == "":
-            data["image"] = base64.b64encode(pic_group[-1]).decode("utf-8")
-            r = requests.post(OCRURLB, params=params, headers=header, data=data)
-            result = json.loads(r.text)
-            print("this is cut img", result)
-            if "words_result" in result:
-                for keyword in result["words_result"]:
-                    word = word_filter(keyword["words"])
-                    if len(word) > 0:
-                        search_string = search_string + word + "+"
-                        search_words.append(word)
+    try:
+        for pic_group in pics:
+            search_string = ""
+            search_words = []
+            ### try with cut images
+            for pic in pic_group[:-1]:
+                data["image"] = base64.b64encode(pic).decode("utf-8")
+                r = requests.post(OCRURLB, params=params, headers=header, data=data)
+                print(r)
+                result = json.loads(r.text)
+                print("this is text_cut img", result)
+                if "words_result" in result:
+                    for keyword in result["words_result"]:
+                        word = word_filter(keyword["words"])
+                        if len(word) > 0:
+                            search_string = search_string + word + "+"
+                            search_words.append(word)
             search_string = search_string[:-1]
-        print("search_string", search_string)
-        if search_string != "":
-            ocr_result_list.append({"search_string": search_string, "search_words": search_words})
-    possessings = Variable.objects.get(name="possessings")
-    possessings.value = possessings.value.replace(str(index), "")
-    possessings.save()
+            ### use the origin image
+            if search_string == "":
+                data["image"] = base64.b64encode(pic_group[-1]).decode("utf-8")
+                r = requests.post(OCRURLB, params=params, headers=header, data=data)
+                result = json.loads(r.text)
+                print("this is cut img", result)
+                if "words_result" in result:
+                    for keyword in result["words_result"]:
+                        word = word_filter(keyword["words"])
+                        if len(word) > 0:
+                            search_string = search_string + word + "+"
+                            search_words.append(word)
+                search_string = search_string[:-1]
+            print("search_string", search_string)
+            if search_string != "":
+                ocr_result_list.append({"search_string": search_string, "search_words": search_words})
+    finally:
+        possessings = Variable.objects.get(name="possessings")
+        possessings.value = possessings.value.replace(str(index), "")
+        possessings.save()
     return ocr_result_list
 
 

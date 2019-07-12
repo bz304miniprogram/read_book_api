@@ -35,7 +35,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'dbTables'
+]
+
+CRONJOBS = [
+    ('0 0 * * *', 'mini_program_api.scheduled_task.ocr_api_refresh','>>/var/log/uwsgi/scheduled_task.log')
 ]
 
 MIDDLEWARE = [

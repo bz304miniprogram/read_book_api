@@ -25,7 +25,8 @@ class Variable(models.Model):
     lastModify = models.DateTimeField(auto_now_add=True)
 
 class ReadTracker(models.Model):
-    webUrl = models.TextField()
+    imgUrl = models.CharField(max_length=255)
+    tags = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     sessionId = models.IntegerField()
     readTime = models.IntegerField()
