@@ -100,7 +100,9 @@ def ocr(pics):
             for pic in pic_group[:-1]:
                 data["image"] = base64.b64encode(pic).decode("utf-8")
                 r = requests.post(OCRURLB, params=params, headers=header, data=data)
-                print(r)
+                if r is None:
+                    continue
+                print(r.text)
                 result = json.loads(r.text)
                 print("this is text_cut img", result)
                 if "words_result" in result:
@@ -114,6 +116,8 @@ def ocr(pics):
             if search_string == "":
                 data["image"] = base64.b64encode(pic_group[-1]).decode("utf-8")
                 r = requests.post(OCRURLB, params=params, headers=header, data=data)
+                if r is None:
+                    continue
                 result = json.loads(r.text)
                 print("this is cut img", result)
                 if "words_result" in result:

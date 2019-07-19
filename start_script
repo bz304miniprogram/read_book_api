@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+#nginx settings
+sed -i '/user/{s/nginx/root/}' /etc/nginx/nginx.conf
+#ln -s /root/project/https_nginx.conf /etc/nginx/conf.d/
+nginx
+
+chmod u+x wait-for-it.sh
+./wait-for-it.sh $DB_PORT_3306_TCP_ADDR:$DB_PORT_3306_TCP_PORT &
+wait
+
+#application settings
+#export DJANGO_SETTINGS_MODULE=mini_program_api.mini_program_api.settings
+ln /usr/local/python3/bin/uwsgi /usr/bin/uwsgi
+cd mini_program_api
+python3 manage.py makemigrations dbTables
+python3 manage.py migrate
+
+
+cd ..
+uwsgi --ini mini_program.ini
+
+

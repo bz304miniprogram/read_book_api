@@ -1,0 +1,22 @@
+
+web:
+    image: cy/mini_program:1.0
+    links:
+      - "db"
+    ports:
+      - "443:8000"
+    restart: always
+
+db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1q2w3e4R.,
+      MYSQL_DATABASE: mini_program
+    restart: always
+    command: ['mysqld', '--character-set-server=utf8']
+    volumes:
+      - "${DOCKER_VOLUME_PATH}/mini_program_api/db:/var/lib/mysql"
+
+
+
+

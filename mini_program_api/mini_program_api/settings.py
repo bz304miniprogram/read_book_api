@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'mini_program',
         'USER': 'root',
         'PASSWORD': '1q2w3e4R.,',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '3306',
     }
     # 'default': {

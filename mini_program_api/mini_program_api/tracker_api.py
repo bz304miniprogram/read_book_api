@@ -118,6 +118,8 @@ def get_annual_poster(request):
                     tagFreq[tag] = tagFreq[tag] + 1
                 else:
                     tagFreq[tag] = 1
+    if sum == 0:
+        return JsonResponse(util.get_json_dict(data={'sum': sum}))
     max_time = [0, '']
     max_times = [0, '']
     for key in timeFreq.keys():
@@ -125,9 +127,10 @@ def get_annual_poster(request):
             max_time = [timeFreq[key][0], key]
         if timeFreq[key][1] > max_times[0]:
             max_times = [timeFreq[key][1], key]
-    sortedTagFreq = sorted(tagFreq.items(), key=lambda kv: kv[1],reverse=True)  # greater case
-    maxTime =  (ReadTracker.objects.filter(sessionId=sessionId,title=max_time[1]).values()[0])
-    maxTimes = (ReadTracker.objects.filter(sessionId=sessionId,title=max_times[1]).values()[0])
+
+    sortedTagFreq = sorted(tagFreq.items(), key=lambda kv: kv[1], reverse=True)  # greater case
+    maxTime = (ReadTracker.objects.filter(sessionId=sessionId, title=max_time[1]).values()[0])
+    maxTimes = (ReadTracker.objects.filter(sessionId=sessionId, title=max_times[1]).values()[0])
     maxTime["time"] = max_time[0]
     maxTimes["time"] = max_times[0]
     return JsonResponse(util.get_json_dict(

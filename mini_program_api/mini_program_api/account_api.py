@@ -49,7 +49,8 @@ def get_access_token():
 
 # invalid when mini program isn't posted
 def get_wxcode(request):
-    if not os.path.exists("../images/wxcode.jpg"):
+    if not os.path.exists("../images"):
+        os.mkdir("../images")
         access_token = get_access_token()
         params = {
             "access_token": access_token,

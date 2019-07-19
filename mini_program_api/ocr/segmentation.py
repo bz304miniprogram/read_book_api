@@ -182,13 +182,14 @@ def segment(pic,
     :return:            返回一个cuts数组，每个元素表示切出来的图片数组
     """
     # ================= 霍夫变换 ==================
-    imgpath = "./test3.jpg"
+    #imgpath = "./test3.jpg"
     # img = cv2.imread(imgpath)
     img = cv2.imdecode(np.fromstring(pic, dtype=np.uint8), -1)
 
     IMG_HEIGHT = img.shape[0]
     IMG_WIDTH = img.shape[1]
-
+    print("image shape(w,h):",IMG_WIDTH,IMG_HEIGHT,)
+    img = cv2.resize(img,(1080,int(IMG_HEIGHT/IMG_WIDTH*1080)))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 灰度处理
 
     #if not os.path.exists("./output"):

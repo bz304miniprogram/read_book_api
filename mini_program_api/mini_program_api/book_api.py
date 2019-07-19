@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 import json
+import os
+from datetime import datetime
 
 
 from . import util
@@ -15,11 +17,19 @@ from dbTables.models import Bookshelf
 @csrf_exempt
 @require_POST
 def upload_pic(request):
-    #global GLOBALINDEX
     sessionId = request.POST.get("sessionId")
     pic = request.FILES.get("pic")
-    # pic = ImageFile(pic)
-    pics = segment(pic.read(), DEBUG=0)
+    pic_b = pic.read()
+    allowed_type = ("image/png","image/jpg","image/jpeg")
+    if not os.path.exists("../images/"+sessionId):
+        os.mkdir("../images/"+sessionId)
+    file = open("../images/"+sessionId+'/'+datetime.now().strftime("%Y%m%d_%H%M%S")+'.jpg','wb')
+    file.write(pic_b)
+    file.close()
+    print (pic.content_type)
+    if pic.content_type not in allowed_type:
+        return JsonResponse(util.get_json_dict(message='not support type', data=[]))
+    pics = segment(pic_b, DEBUG=0)
     ocr_result  = ocr(pics)
     return JsonResponse(util.get_json_dict(message='analyse success', data=ocr_result))
 
